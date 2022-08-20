@@ -85,15 +85,12 @@ router.delete('/deleteById', (ctx, next) => {
 });
 
 router.put('/editTicket', (ctx, next) => {
-    const updIndex = tickets.findIndex((ticket) => ticket.id === id);
-      const updTicketData = ctx.request.body;
-      const ticket = {
-        ...tickets[updIndex],
-        ...updTicketData,
-      };
-      tickets.splice(updIndex, 1, ticket);
-      ctx.response.body = tickets;
-      return;
+    const { id, name, description } = ctx.request.body;
+    const index = tickets.findIndex((item) => item.id === id);
+    console.log(index);
+    tickets[index].name = name;
+    tickets[index].description = description;
+    ctx.response.body = 'ok';
 });
 
 app.use(router.routes());
