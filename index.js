@@ -41,15 +41,18 @@ app.use(
             'POST',
             'DELETE',
             'OPTIONS',
+            'PUT',
             'allTickets',
             'createTicket',
             'deleteById',
+            'editTicket',
         ],
         allowHeaders: ['Content-Type'],
     })
 );
 router.get('/allTickets', async (ctx, next) => {
-    ctx.body = tickets;
+    ctx.response.body = tickets;
+    next();
 });
 router.post('/createTicket', async (ctx, next) => {
     const createData = ctx.request.body;
@@ -58,13 +61,14 @@ router.post('/createTicket', async (ctx, next) => {
         name: createData.name,
         status: false,
         description: createData.description || '',
-        created: formatDate(new Date())
+        created: formatDate(new Date()),
     };
     tickets.push(newTicket);
     ctx.response.body = [newTicket];
+    console.log(newTicket)
 
 });
-router.delete('/deleteById', ctx => {
+router.delete('/deleteById', (ctx, next) => {
     const id = uuidv4();
     const deleteIndx = tickets.findIndex(ticket => ticket.id === id);
 
@@ -79,5 +83,18 @@ router.delete('/deleteById', ctx => {
         };
     }
 });
+
+router.put('/editTicket', (ctx, next) => {
+    const updIndex = tickets.findIndex((ticket) => ticket.id === id);
+      const updTicketData = ctx.request.body;
+      const ticket = {
+        ...tickets[updIndex],
+        ...updTicketData,
+      };
+      tickets.splice(updIndex, 1, ticket);
+      ctx.response.body = tickets;
+      return;
+});
+
 app.use(router.routes());
 app.listen(7080)
