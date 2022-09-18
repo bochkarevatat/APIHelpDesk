@@ -44,7 +44,7 @@ app.use(
             'PUT',
             'allTickets',
             'createTicket',
-            'deleteById',
+            'ticketById',
             'editTicket',
         ],
         allowHeaders: ['Content-Type'],
@@ -53,6 +53,7 @@ app.use(
 router.get('/allTickets', async (ctx, next) => {
     ctx.response.body = tickets;
     next();
+    // console.log(tickets[0].id)
 });
 router.post('/createTicket', async (ctx, next) => {
     const createData = ctx.request.body;
@@ -65,26 +66,24 @@ router.post('/createTicket', async (ctx, next) => {
     };
     tickets.push(newTicket);
     ctx.response.body = [newTicket];
-    console.log(newTicket)
+    // console.log(newTicket)
 
 });
-router.delete('/deleteById', (ctx, next) => {
-    const id = uuidv4();
-    const deleteIndx = tickets.findIndex(ticket => ticket.id === id);
 
-    if (deleteIndx) {
-        tickets.splice(deleteIndx, 1);
-        ctx.response.body = {
-            success: true
-        };
+router.delete('/deleteById/:id', ctx => {
+    const id = ctx.params.id;
+    const deleteIdx = tickets.findIndex(ticket => ticket.id === id.substring(1));
+    // const deleteIdx = tickets.findIndex(ticket => ticket.id === id);
+    console.log(deleteIdx)
+    if (deleteIdx !== -1) {
+        tickets.splice(deleteIdx, 1);
+        ctx.response.body = {success: true};
     } else {
-        ctx.response.body = {
-            success: false
-        };
-    }
+        ctx.response.body = {success: false};
+    }   
 });
 
-router.put('/editTicket', (ctx, next) => {
+router.put('/editTicket', (ctx, next) => { 
     const { id, name, description } = ctx.request.body;
     const index = tickets.findIndex((item) => item.id === id);
     console.log(index);
@@ -92,6 +91,8 @@ router.put('/editTicket', (ctx, next) => {
     tickets[index].description = description;
     ctx.response.body = 'ok';
 });
+
+
 
 app.use(router.routes());
 app.listen(7080)
