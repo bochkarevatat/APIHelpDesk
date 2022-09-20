@@ -71,13 +71,13 @@ router.post('/createTicket', async (ctx, next) => {
 });
 
 router.delete('/deleteById/:id', ctx => {
-    const id = ctx.params.id;
-    const deleteIdx = tickets.findIndex(ticket => ticket.id === id.substring(1));
-    // const deleteIdx = tickets.findIndex(ticket => ticket.id === id);
-    console.log(deleteIdx)
+    const id = ctx.request.body.id;
+    const deleteIdx = tickets.findIndex(ticket => ticket.id === id);
+    console.log(id, deleteIdx,ctx.request.body)
     if (deleteIdx !== -1) {
         tickets.splice(deleteIdx, 1);
         ctx.response.body = {success: true};
+        ctx.response.body = 'ok';
     } else {
         ctx.response.body = {success: false};
     }   
